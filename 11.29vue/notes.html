@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="vue.js"></script>
+    <title>便利贴</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding:0;
+        list-style:none;
+    }
+    html,body{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #effaff;
+    }
+    header{
+        width: 100%;
+        height: 80px;
+        background: #333333;
+    }
+    section{
+        width: 100%;
+        height: calc(100% - 80px);
+        position: relative;
+    }
+    .list{
+        width: 150px;
+        height: 150px;
+        border-radius: 5px;
+        letter-spacing: 1px;
+        padding: 15px;
+        overflow: hidden;
+        position: absolute;
+    }
+</style>
+<body>
+<div id="app">
+    <header>
+
+    </header>
+    <section>
+        <!--v-on:schange添加一个事件监听，监听的是schange这个事件,update是事件发生后触发的事件-->
+        <notes v-for="(item,index) in notes" :msg="item" :key="index" :aa="name" v-on:schange="update"></notes>
+    </section>
+</div>
+<script>
+   /* let arr = [
+        {id:1,content:'关于理想我从来没选择放弃，即使在灰头土脸的日子里',color:'#ff318e',x:50,y:90,type:'@_@生活'},
+        {id:2,content:'也许我没有天分，但我有梦的天真',color:'#ff6700',x:200,y:200,type:'@_@生活'},
+        {id:3,content:'付出所有的青春不留遗憾',color:'#868bff',x:350,y:300,type:'^_^新闻'},
+        {id:4,content:'生命的广阔，不经历磨难怎能感到',color:'#ccffb4',x:500,y:90,type:'@_@生活'},
+        {id:5,content:'生命的闪耀，不坚持到底怎能感到',color:'#fffe93',x:800,y:150,type:'*_*歌词'},
+        {id:6,content:'失败后郁郁寡欢，那是懦夫的表现',color:'#ff0c29',x:1000,y:90,type:'@_@生活'},
+        {id:7,content:'在天色破晓之前，我们要更加勇敢，等待日出时最耀眼的瞬间',color:'#d8a0ff',x:600,y:300,type:'$_$新闻'},
+
+    ]
+//    border:'1px solid'+msg.color
+    localStorage.notes = JSON.stringify(arr);*/
+    Vue.component('notes',{
+        // 接收视图中绑定的msg是一个对象，aa是一个初始数据类型
+        props:['msg','aa'],
+        data:function(){
+            return {
+                // 深拷贝将msg的内容保存到{}中  把父
+                smsg: Object.assign({},this.msg)
+            }
+        },
+        template:`
+              <div class="list" :style="{left:smsg.x+'px',top:smsg.y+'px',background:smsg.color}">
+                <!--<h1> {{smsg.type}}  <span>X</span></h1>-->
+                {{smsg.type}}
+                <br>
+                <textarea v-model="smsg.content"></textarea>
+
+                <br>
+                <button @click="smsg.x+=20">{{smsg.type}}</button>
+             </div>
+               `,
+        methods:{
+            change(){
+               /* this.name += 'hello';
+                this.$emit('pchange',this.name);*/
+            }
+        },
+        watch:{
+            'smsg':{
+                handler:function(v,oldv){
+//                    console.log(v)
+                    // 监听到改变后告诉父组件发生改变
+                    this.$emit('schange',this.smsg);
+                },
+                deep:true
+
+            }
+        }
+
+    });
+    let app = new Vue({
+        el:'#app',
+        data:{
+            // 在数据拿回来之后保存下来
+            notes:[],
+            name:'zhangsan'
+        },
+        methods:{
+          update(v){
+              let index = 0;
+              this.notes.forEach((element,i)=>{
+                  if(element.id == v.id){
+                      index = i;
+                  }
+              })
+              //删了之后再放回去
+              this.notes.splice(index,1,v)
+          }
+        },
+        // 在mounted后将数据拿回来
+        mounted(){
+            this.notes = JSON.parse(localStorage.notes);
+        },
+        // 监听notes
+        watch:{
+            'notes':{
+                handler:function () {
+                    localStorage.notes = JSON.stringify(this.notes);
+                },
+                deep:true
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../11.27vue/vue.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+
+    <textarea v-model="text">
+        {{text}}
+    </textarea>
+    <!--多选框-->
+    <input type="checkbox" v-model="hobby" value="code">
+    <input type="checkbox" v-model="hobby" value="ppq">
+    <input type="checkbox" v-model="hobby" value="sing">
+    {{hobby}}
+    <br>
+    <!--单选框-->
+    <input type="radio" value="nan" v-model="sex" name="zhangsan">
+    <input type="radio" value="nv" v-model="sex" name="zhangsan">
+    {{sex}}
+    <br>
+    <!--修饰符.lazy实现当失去焦点时视图才会发生改变-->
+    <input type="text" v-model.lazy="name">
+    {{name}}
+    <br>
+    <!--修饰符.number实现两数相加-->
+    <input type="text" v-model.number="num1">
+    <input type="text" v-model.number="num2">
+    {{num1+num2}}
+</div>
+<script>
+    let data = {
+        name:'zhangsan',
+        text:'这是一段文本',
+        hobby:['code'],
+        sex:'nv',
+        num1:10,
+        num2:20
+
+    };
+    let app = new Vue({
+        el:'#app',
+        data:data,
+    })
+</script>
+</body>
+</html>
